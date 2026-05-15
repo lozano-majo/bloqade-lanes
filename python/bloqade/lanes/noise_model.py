@@ -233,21 +233,12 @@ def generate_coherent_noise_model(
     For each single-qubit gate with rotation angle Omega (in radians), a coherent
     error unitary is applied immediately after the ideal gate, followed by the
     Pauli error channel. The coherent error is represented as an arbitrary u3
-    rotation (ZYZ convention) whose angles scale linearly with Omega:
+    rotation whose angles scale linearly with Omega:
 
         u3(epsilon_theta * Omega, epsilon_phi * Omega, epsilon_lambda * Omega)
 
-    The full noisy channel per gate is therefore:
-
-        E(rho) = P( U_err . U . rho . U† . U_err† )
-
-    where U is the ideal gate, U_err = u3(epsilon_theta * Omega, ...), and P is
-    the asymmetric Pauli channel. Both coherent and Pauli parameters are read
-    from noise_model, consistent with how generate_simple_noise_model works.
-
-    Local and global coherent errors are parameterized separately since they
-    correspond to physically distinct error sources (Raman laser miscalibration
-    vs global beam miscalibration).
+    Both coherent and Pauli parameters are read from noise_model, consistent 
+    with how generate_simple_noise_model() works.
 
     The rotation angle Omega is passed directly by the compiler into the noise
     kernel as `rotation_angle` (in radians) for all single-qubit gate types
