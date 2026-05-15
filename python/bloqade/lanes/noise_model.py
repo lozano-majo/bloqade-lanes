@@ -2,11 +2,14 @@ from typing import TYPE_CHECKING, Any
 
 from kirin.dialects import debug, ilist
 
-from bloqade import qubit, squin
-from bloqade.lanes.transform import SimpleLogicalNoiseModel, SimpleNoiseModel
+from bloqade import qubit, squin  # type: ignore[import-untyped]
+from bloqade.lanes.transform import (  # type: ignore[import-untyped]
+    SimpleLogicalNoiseModel,
+    SimpleNoiseModel,
+)
 
 if TYPE_CHECKING:
-    from bloqade.cirq_utils.noise.model import (
+    from bloqade.cirq_utils.noise.model import (  # type: ignore[import-untyped]
         GeminiNoiseModelABC,
     )
 
@@ -91,7 +94,7 @@ def generate_simple_noise_model(
     if cz_paired_error_dict is None:
         raise ValueError("CZ paired error probabilities must be provided.")
 
-    cz_paired_error_probabilities = ilist.IList(
+    cz_paired_error_probabilities: ilist.IList[float, Any] = ilist.IList(
         [cz_paired_error_dict[k] for k in PAIRED_KEYS]
     )
 
@@ -194,7 +197,9 @@ def generate_logical_noise_model(
 
     physical = generate_simple_noise_model(noise_model, loss=loss)
 
-    from bloqade.lanes.arch.gemini.logical.upstream import steane7_initialize_with_noise
+    from bloqade.lanes.arch.gemini.logical.upstream import (
+        steane7_initialize_with_noise,  # type: ignore[import-untyped]
+    )
 
     clean_init, noisy_init = steane7_initialize_with_noise(
         local_px=noise_model.local_px,
@@ -217,6 +222,7 @@ def generate_logical_noise_model(
         logical_initialize_clean=clean_init,
         logical_initialize_noisy=noisy_init,
     )
+
 
 def generate_coherent_noise_model(
     noise_model: "GeminiNoiseModelABC | None" = None,
@@ -316,7 +322,7 @@ def generate_coherent_noise_model(
     if cz_paired_error_dict is None:
         raise ValueError("CZ paired error probabilities must be provided.")
 
-    cz_paired_error_probabilities = ilist.IList(
+    cz_paired_error_probabilities: ilist.IList[float, Any] = ilist.IList(
         [cz_paired_error_dict[k] for k in PAIRED_KEYS]
     )
 
@@ -353,8 +359,8 @@ def generate_coherent_noise_model(
     local_py = noise_model.local_py
     local_pz = noise_model.local_pz
     local_loss_prob = noise_model.local_loss_prob
-    local_epsilon_theta  = noise_model.local_coherent_epsilon_theta
-    local_epsilon_phi    = noise_model.local_coherent_epsilon_phi
+    local_epsilon_theta = noise_model.local_coherent_epsilon_theta
+    local_epsilon_phi = noise_model.local_coherent_epsilon_phi
     local_epsilon_lambda = noise_model.local_coherent_epsilon_lambda
 
     @squin.kernel
@@ -363,8 +369,8 @@ def generate_coherent_noise_model(
     ):
         debug.info("Local Gate Coherent + Pauli Noise")
         squin.broadcast.u3(
-            local_epsilon_theta  * rotation_angle,
-            local_epsilon_phi    * rotation_angle,
+            local_epsilon_theta * rotation_angle,
+            local_epsilon_phi * rotation_angle,
             local_epsilon_lambda * rotation_angle,
             qubits,
         )
@@ -376,8 +382,8 @@ def generate_coherent_noise_model(
     def local_rz_noise(qubits: ilist.IList[qubit.Qubit, Any], rotation_angle: float):
         debug.info("Local Rz Coherent + Pauli Noise")
         squin.broadcast.u3(
-            local_epsilon_theta  * rotation_angle,
-            local_epsilon_phi    * rotation_angle,
+            local_epsilon_theta * rotation_angle,
+            local_epsilon_phi * rotation_angle,
             local_epsilon_lambda * rotation_angle,
             qubits,
         )
@@ -389,8 +395,8 @@ def generate_coherent_noise_model(
     global_py = noise_model.global_py
     global_pz = noise_model.global_pz
     global_loss_prob = noise_model.global_loss_prob
-    global_epsilon_theta  = noise_model.global_coherent_epsilon_theta
-    global_epsilon_phi    = noise_model.global_coherent_epsilon_phi
+    global_epsilon_theta = noise_model.global_coherent_epsilon_theta
+    global_epsilon_phi = noise_model.global_coherent_epsilon_phi
     global_epsilon_lambda = noise_model.global_coherent_epsilon_lambda
 
     @squin.kernel
@@ -399,8 +405,8 @@ def generate_coherent_noise_model(
     ):
         debug.info("Global Gate Coherent + Pauli Noise")
         squin.broadcast.u3(
-            global_epsilon_theta  * rotation_angle,
-            global_epsilon_phi    * rotation_angle,
+            global_epsilon_theta * rotation_angle,
+            global_epsilon_phi * rotation_angle,
             global_epsilon_lambda * rotation_angle,
             qubits,
         )
@@ -414,8 +420,8 @@ def generate_coherent_noise_model(
     def global_rz_noise(qubits: ilist.IList[qubit.Qubit, Any], rotation_angle: float):
         debug.info("Global Rz Coherent + Pauli Noise")
         squin.broadcast.u3(
-            global_epsilon_theta  * rotation_angle,
-            global_epsilon_phi    * rotation_angle,
+            global_epsilon_theta * rotation_angle,
+            global_epsilon_phi * rotation_angle,
             global_epsilon_lambda * rotation_angle,
             qubits,
         )
